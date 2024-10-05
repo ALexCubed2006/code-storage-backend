@@ -1,7 +1,7 @@
 import { prisma } from '../../index.js'
 
 export class AccessService {
-	async getAccessUser(id) {
+	async isLogged(id) {
 		const user = await prisma.user.findUnique({
 			where: {
 				id,
@@ -13,7 +13,7 @@ export class AccessService {
         
         return user
 	}
-    async getAccessAdmin(id) {
+    async isAdmin(id) {
         const admin = await prisma.user.findUnique({
             where: {
                 id,

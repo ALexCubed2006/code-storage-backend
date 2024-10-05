@@ -3,13 +3,14 @@ import express from 'express'
 import { accessController } from './src/access/access.controller.js'
 import { authController } from './src/auth/auth.controller.js'
 import { authMiddleware } from './src/middleware/auth.middleware.js'
+import { isLoggedMiddleware } from './src/middleware/isLogged.middleware.js'
 export const prisma = new PrismaClient()
 const PORT = process.env.PORT || 3000
 const app = express()
 
 app.use(express.json())
 
-// CORS
+// CORS(cross origin resource sharing) for local development
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
 	next()
@@ -25,14 +26,16 @@ app.options('*', (req, res) => {
 })
 
 async function main() {
-	app.use('/api/auth', authController)
+	app.use('/api/auth', isLoggedMiddleware, authController)
 	app.use('/api/access', authMiddleware, accessController)
 
-	app.get('/getUsers', authMiddleware, async (_, res) => {
+	// for test and debug
+	app.get('/getUsers', async (_, res) => {
 		const users = await prisma.user.findMany({})
 		console.log(users)
 		res.json(users)
 	})
+
 	app.post('/setUser', async (req, res) => {
 		const { email, password, name } = req.body
 		const user = await prisma.user.create({
@@ -45,17 +48,57 @@ async function main() {
 		res.json(user)
 	})
 
+	app.get('/getGroups', async (_, res) => {
+		const groups = await prisma.group.findMany({})
+		console.log(groups)
+		res.json(groups)
+	})
+
+	app.post('/setGroup', async (req, res) => {
+		const { name } = req.body
+		const user = await prisma.group.findMany({
+			where: {
+				id: 1,
+			},
+		})
+		const group = await prisma.group.create({
+			data: {
+				name,
+				users: {
+					connect: user,
+				},
+			},
+		})
+		res.json(group)
+	})
+
+	app.post('/addUserToGroup', async (req, res) => {
+		const { userId, groupId } = req.body
+		const user = await prisma.group.update({
+			where: {
+				id: groupId,
+			},
+			data: {
+				users: {
+					connect: {
+						id: userId,
+					},
+				},
+			},
+		})
+		res.json(user)
+	})
+
+	app.get('/getFiles', async (_, res) => {
+		const files = await prisma.codeFiles.findMany({})
+		console.log(files)
+		res.json(files)
+	})
+
+	// start server on localhost:PORT
 	app.listen(PORT, () =>
 		console.log(`Server running on  http://localhost:${PORT}`),
 	)
 }
 
 main()
-	.then(async () => {
-		await prisma.$connect()
-	})
-	.catch(async (e) => {
-		console.error(e)
-		await prisma.$disconnect()
-		process.exit(1)
-	})

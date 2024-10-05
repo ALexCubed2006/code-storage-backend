@@ -5,7 +5,7 @@ const router = Router()
 const accessService = new AccessService()
 
 router.get('/isLogged', async (req, res) => {
-	const user = await accessService.getAccessUser(req.user.id)
+	const user = await accessService.isLogged(req.user.id)
 
 	if (!user) {
 		return res.status(401).json({ error: 'Unauthorized' })
@@ -15,7 +15,7 @@ router.get('/isLogged', async (req, res) => {
 })
 
 router.get('/isAdmin', async (req, res) => {
-	const admin = await accessService.getAccessAdmin(req.user.id)
+	const admin = await accessService.isAdmin(req.user.id)
 
 	if (!admin) {
 		return res.status(401).json({ error: 'Not admin' })

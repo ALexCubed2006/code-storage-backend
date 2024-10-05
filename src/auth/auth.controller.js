@@ -7,6 +7,11 @@ const router = Router()
 router.post('/login', async (req, res) => {
 	const { email, password } = req.body
 
+	if (!email || !password) {
+		res.status(400).json({ error: 'Email and password are required' })
+		return null
+	}
+
 	const { token, user } = await authService.login(email, password)
 	if (!user) {
 		res.status(401).json({ error: 'Unauthorized' })
@@ -17,9 +22,9 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/register', async (req, res) => {
-	const { email, password } = req.body
+	const { email, password, name } = req.body
 
-	const user = await authService.register(email, password)
+	const user = await authService.register(email, password, name)
 	if (!user) {
 		res.status(400).json({ error: 'User already exists' })
 	} else res.json(user)

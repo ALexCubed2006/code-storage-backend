@@ -29,7 +29,7 @@ export class AuthService {
 		}
 	}
 
-	async register(email, password) {
+	async register(email, password, name) {
 		const userExists = await prisma.user.findFirst({
 			where: {
 				email,
@@ -42,6 +42,7 @@ export class AuthService {
 			data: {
 				email,
 				password,
+				name,
 			},
 		})
 
