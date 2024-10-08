@@ -26,7 +26,8 @@ app.options('*', (req, res) => {
 })
 
 async function main() {
-	app.use('/api/auth', isLoggedMiddleware, authController)
+	app.use('/api/auth', authController)
+	app.use('/api/redirect', isLoggedMiddleware, authController)
 	app.use('/api/access', authMiddleware, accessController)
 
 	// for test and debug

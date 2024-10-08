@@ -1,8 +1,19 @@
 import { Router } from 'express'
-import { AuthService } from '../auth/auth.service.js'	
+import { AuthService } from '../auth/auth.service.js'
 
 const authService = new AuthService()
 const router = Router()
+
+router.get('/redirectLogin', async (req, res) => {
+	res.json({
+		navigate: '/login',
+	})
+})
+router.get('/redirectRegister', async (req, res) => {
+	res.json({
+		navigate: '/register',
+	})
+})
 
 router.post('/login', async (req, res) => {
 	const { email, password } = req.body
