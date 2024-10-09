@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { prisma } from '../../index.js'
+import { prisma } from '../../config.js'
 
 function generateToken(id) {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {

@@ -10,13 +10,14 @@ datasource db {
 model Group {
   id    Int @id @default(autoincrement())
   name  String @unique
-  users User[] 
+  users User[] @relation()
 }
 
 model CodeFiles {
   id Int  @id @default(autoincrement())
-  user  User @relation(fields: [userId], references: [id])
-  userId  Int
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  path String[]
 }
 
 model User {
@@ -37,7 +38,9 @@ enum Role {
 }
 
 enum GroupRole {
+  OWNER
   MEMBER
-  LEADER
+  MODERATOR
   GUEST
+  BANNED
 }

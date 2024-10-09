@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client'
 import express from 'express'
 import { accessController } from './src/access/access.controller.js'
 import { authController } from './src/auth/auth.controller.js'
 import { authMiddleware } from './src/middleware/auth.middleware.js'
 import { isLoggedMiddleware } from './src/middleware/isLogged.middleware.js'
-export const prisma = new PrismaClient()
-const PORT = process.env.PORT || 3000
+import { prisma } from './config.js'
+import { variables } from './config.js'
+
 const app = express()
 
 app.use(express.json())
@@ -97,8 +97,8 @@ async function main() {
 	})
 
 	// start server on localhost:PORT
-	app.listen(PORT, () =>
-		console.log(`Server running on  http://localhost:${PORT}`),
+	app.listen(variables.SERVER_PORT, () =>
+		console.log(`Server running on  http://localhost:${variables.SERVER_PORT}`),
 	)
 }
 
