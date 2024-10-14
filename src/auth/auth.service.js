@@ -1,15 +1,18 @@
 import jwt from 'jsonwebtoken'
-import { prisma } from '../../config.js'
+import { JWT_SIGN, prisma } from '../../config.js'
 
+// generate jwt token
+// encode user id
+// with secret signature
 function generateToken(id) {
-	return jwt.sign({ id }, process.env.JWT_SECRET, {
+	return jwt.sign({ id }, JWT_SIGN, {
 		expiresIn: '24h',
 	})
 }
 
 export class AuthService {
 	async login(email, password) {
-		const user = await prisma.user.findFirst({
+		const user = await prisma.user.findUnique({
 			where: {
 				email,
 			},
@@ -22,10 +25,11 @@ export class AuthService {
 		}
 
 		const token = generateToken(user.id)
+		const { password: _, ...userWithoutPassword } = user
 
 		return {
 			token,
-			user,
+			user: userWithoutPassword,
 		}
 	}
 

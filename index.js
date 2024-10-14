@@ -1,22 +1,33 @@
 import express from 'express'
+import fileUpload from 'express-fileupload'
+import { prisma, SERVER_HOST, SERVER_PORT } from './config.js'
 import { accessController } from './src/access/access.controller.js'
 import { authController } from './src/auth/auth.controller.js'
+import { dataController } from './src/data/data.controller.js'
 import { authMiddleware } from './src/middleware/auth.middleware.js'
 import { isLoggedMiddleware } from './src/middleware/isLogged.middleware.js'
-import { prisma } from './config.js'
-import { variables } from './config.js'
+import { validateMiddleware } from './src/middleware/validate.middleware.js'
 
 const app = express()
 
+// global middlewares
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+
+// file upload
+app.use(fileUpload({}))
 
 // CORS(cross origin resource sharing) for local development
 app.use((req, res, next) => {
-	res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
+	res.header('Access-Control-Allow-Origin', '*')
+	res.header(
+		'Access-Control-Allow-Headers',
+		'Origin, X-Requested-With, Content-Type, Accept',
+	)
 	next()
 })
 app.options('*', (req, res) => {
-	res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
+	res.header('Access-Control-Allow-Origin', '*')
 	res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
 	res.header(
 		'Access-Control-Allow-Headers',
@@ -26,10 +37,13 @@ app.options('*', (req, res) => {
 })
 
 async function main() {
-	app.use('/api/auth', authController)
+	// main routes of app
+	app.use('/api/auth', validateMiddleware, authController)
 	app.use('/api/redirect', isLoggedMiddleware, authController)
 	app.use('/api/access', authMiddleware, accessController)
+	app.use('/api/upload', authMiddleware, dataController)
 
+	// test routes
 	// for test and debug
 	app.get('/getUsers', async (_, res) => {
 		const users = await prisma.user.findMany({})
@@ -91,14 +105,13 @@ async function main() {
 	})
 
 	app.get('/getFiles', async (_, res) => {
-		const files = await prisma.codeFiles.findMany({})
-		console.log(files)
+		const files = await prisma.codeFile.findMany({})
 		res.json(files)
 	})
 
-	// start server on localhost:PORT
-	app.listen(variables.SERVER_PORT, () =>
-		console.log(`Server running on  http://localhost:${variables.SERVER_PORT}`),
+	// start server on SERVER_HOST : SERVER_PORT
+	app.listen(SERVER_PORT, () =>
+		console.log(`Server running on  http://${SERVER_HOST}:${SERVER_PORT}`),
 	)
 }
 

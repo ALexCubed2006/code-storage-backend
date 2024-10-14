@@ -18,14 +18,9 @@ router.get('/redirectRegister', async (req, res) => {
 router.post('/login', async (req, res) => {
 	const { email, password } = req.body
 
-	if (!email || !password) {
-		res.status(400).json({ error: 'Email and password are required' })
-		return null
-	}
-
 	const { token, user } = await authService.login(email, password)
 	if (!user) {
-		res.status(401).json({ error: 'Unauthorized' })
+		res.status(401).json({ error: '[login] Unauthorized' })
 		return null
 	}
 
@@ -37,7 +32,7 @@ router.post('/register', async (req, res) => {
 
 	const user = await authService.register(email, password, name)
 	if (!user) {
-		res.status(400).json({ error: 'User already exists' })
+		res.status(400).json({ error: '[register] User already exists' })
 	} else res.json(user)
 })
 

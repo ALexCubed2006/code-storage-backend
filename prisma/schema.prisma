@@ -8,28 +8,31 @@ datasource db {
 }
 
 model Group {
-  id    Int @id @default(autoincrement())
-  name  String @unique
-  users User[] @relation()
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  users   User[] @relation()
+  usersId Int[]
 }
 
-model CodeFiles {
-  id Int  @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
-  userId Int
-  path String[]
+model CodeFile {
+  id         Int      @id @default(autoincrement())
+  name       String   @default("unnamed")
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  uploadedAt DateTime @default(now())
+  path       String
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String 
-  name     String?
-  role     Role  @default(USER)
-  group    Group?  @relation(fields: [groupId], references: [id])
-  groupId  Int? 
-  groupRole GroupRole? @default(MEMBER) 
-  codeFiles CodeFiles[]
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  name      String?
+  role      Role       @default(USER)
+  group     Group?     @relation(fields: [groupId], references: [id])
+  groupId   Int?
+  groupRole GroupRole? @default(MEMBER)
+  codeFile  CodeFile[]
 }
 
 enum Role {

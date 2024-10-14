@@ -1,6 +1,25 @@
 import { prisma } from '../../config.js'
 
 export class AccessService {
+	async isAuthorized(id) {
+		const { name, email, role, groupRole } = await prisma.user.findUnique({
+			where: {
+				id,
+			},
+		})
+
+		if (!email) {
+			return null
+		}
+
+		return {
+			name,
+			email,
+			role,
+			groupRole,
+		}
+	}
+
 	// User roles
 	async isUser(id) {
 		const user = await prisma.user.findUnique({
@@ -8,7 +27,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!user) {
+		if (user.role !== 'user') {
 			return null
 		}
 
@@ -21,7 +40,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!admin.role !== 'admin') {
+		if (admin.role !== 'admin') {
 			return null
 		}
 
@@ -35,7 +54,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!owner.role !== 'owner') {
+		if (owner.role !== 'owner') {
 			return null
 		}
 
@@ -48,7 +67,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!member.role !== 'member') {
+		if (member.role !== 'member') {
 			return null
 		}
 
@@ -61,7 +80,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!moderator.role !== 'moderator') {
+		if (moderator.role !== 'moderator') {
 			return null
 		}
 
@@ -74,7 +93,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!guest.role !== 'guest') {
+		if (guest.role !== 'guest') {
 			return null
 		}
 
@@ -87,7 +106,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (!banned.banned) {
+		if (banned.role !== 'banned') {
 			return null
 		}
 
