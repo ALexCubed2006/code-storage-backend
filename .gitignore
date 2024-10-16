@@ -3,4 +3,4 @@ node_modules
 .env
 
 # Ignore uploaded files and images
-/public/uploads
+/public/uploads/*

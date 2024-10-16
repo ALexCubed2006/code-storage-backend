@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth.service.js'
 const authService = new AuthService()
 const router = Router()
 
+// navigation routes
 router.get('/redirectLogin', async (req, res) => {
 	res.json({
 		navigate: '/login',
@@ -15,6 +16,7 @@ router.get('/redirectRegister', async (req, res) => {
 	})
 })
 
+// login routes
 router.post('/login', async (req, res) => {
 	const { email, password } = req.body
 

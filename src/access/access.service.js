@@ -1,6 +1,10 @@
 import { prisma } from '../../config.js'
 
+// class for check
+// if the user have role (access)
+// to do something
 export class AccessService {
+	// is user authorized
 	async isAuthorized(id) {
 		const { name, email, role, groupRole } = await prisma.user.findUnique({
 			where: {

@@ -1,6 +1,6 @@
 import express from 'express'
 import fileUpload from 'express-fileupload'
-import { prisma, SERVER_HOST, SERVER_PORT } from './config.js'
+import { prisma, SERVER_PORT, SERVER_URL } from './config.js'
 import { accessController } from './src/access/access.controller.js'
 import { authController } from './src/auth/auth.controller.js'
 import { dataController } from './src/data/data.controller.js'
@@ -110,9 +110,7 @@ async function main() {
 	})
 
 	// start server on SERVER_HOST : SERVER_PORT
-	app.listen(SERVER_PORT, () =>
-		console.log(`Server running on  http://${SERVER_HOST}:${SERVER_PORT}`),
-	)
+	app.listen(SERVER_PORT, () => console.log(`Server running on ${SERVER_URL}`))
 }
 
 main()

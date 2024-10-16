@@ -10,7 +10,7 @@ router.get('/isAuthorized', async (req, res) => {
 	if (!user) {
 		return res.status(401).json({ error: '[access] Unauthorized' })
 	}
-	
+
 	res.status(200).json(user)
 })
 
