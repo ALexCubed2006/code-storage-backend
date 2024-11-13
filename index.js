@@ -3,6 +3,7 @@ import fileUpload from 'express-fileupload'
 import { prisma, SERVER_PORT, SERVER_URL } from './config.js'
 import { accessController } from './src/access/access.controller.js'
 import { authController } from './src/auth/auth.controller.js'
+import { changeDataController } from './src/changeData/changeData.controller.js'
 import { dataController } from './src/data/data.controller.js'
 import { authMiddleware } from './src/middleware/auth.middleware.js'
 import { isLoggedMiddleware } from './src/middleware/isLogged.middleware.js'
@@ -11,13 +12,13 @@ import { validateMiddleware } from './src/middleware/validate.middleware.js'
 const app = express()
 
 // global middlewares
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true })) // ???
 app.use(express.json())
 
 // file upload
 app.use(fileUpload({}))
 
-// CORS(cross origin resource sharing) for local development
+// CORS(cross origin resource sharing) for local development ???
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*')
 	res.header(
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 	next()
 })
 app.options('*', (req, res) => {
+	// ???
 	res.header('Access-Control-Allow-Origin', '*')
 	res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
 	res.header(
@@ -39,12 +41,12 @@ app.options('*', (req, res) => {
 async function main() {
 	// main routes of app
 	app.use('/api/auth', validateMiddleware, authController)
+	app.use('/api/changeData', authMiddleware, changeDataController)
 	app.use('/api/redirect', isLoggedMiddleware, authController)
 	app.use('/api/access', authMiddleware, accessController)
 	app.use('/api/upload', authMiddleware, dataController)
 
-	// test routes
-	// for test and debug
+	// routes for test and debug
 	app.get('/getUsers', async (_, res) => {
 		const users = await prisma.user.findMany({})
 		console.log(users)
@@ -110,7 +112,9 @@ async function main() {
 	})
 
 	// start server on SERVER_HOST : SERVER_PORT
-	app.listen(SERVER_PORT, () => console.log(`Server running on ${SERVER_URL}`))
+	app.listen(SERVER_PORT, () =>
+		console.log(`Server running on ${SERVER_URL}`),
+	)
 }
 
 main()

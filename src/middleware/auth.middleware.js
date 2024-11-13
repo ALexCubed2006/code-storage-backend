@@ -6,9 +6,9 @@ export const authMiddleware = (req, res, next) => {
 	try {
 		const token = req.headers['authorization'].split(' ')[1]
 		if (!token) {
-			return res.status(401).json({ error: '[auth] invalid token' })
+			return res.status(401).json({ error: '[auth] no token provided' })
 		}
-		
+
 		// verify token
 		// if the token is invalid, it will throw an error
 		const decoded = jwt.verify(token, JWT_SIGN)
@@ -21,6 +21,8 @@ export const authMiddleware = (req, res, next) => {
 		if (e.name === 'TokenExpiredError') {
 			return res.status(200).json({ error: '[auth] token expired' })
 		}
+		console.log(e)
+		console.log(res.headers)
 		res.status(401).json({ error: '[auth] Unauthorized', e })
 	}
 }

@@ -4,13 +4,14 @@ import { prisma } from '../../config.js'
 // if the user have role (access)
 // to do something
 export class AccessService {
-	// is user authorized
+	// ----- is user authorized -----
 	async isAuthorized(id) {
-		const { name, email, role, groupRole } = await prisma.user.findUnique({
-			where: {
-				id,
-			},
-		})
+		const { name, email, role, groupRole, phoneNumber } =
+			await prisma.user.findUnique({
+				where: {
+					id,
+				},
+			})
 
 		if (!email) {
 			return null
@@ -19,12 +20,13 @@ export class AccessService {
 		return {
 			name,
 			email,
+			phoneNumber,
 			role,
 			groupRole,
 		}
 	}
 
-	// User roles
+	// ----- User roles -----
 	async isUser(id) {
 		const user = await prisma.user.findUnique({
 			where: {
@@ -51,7 +53,7 @@ export class AccessService {
 		return admin
 	}
 
-	// Group roles
+	// ----- Group roles -----
 	async isOwner(id) {
 		const owner = await prisma.user.findUnique({
 			where: {

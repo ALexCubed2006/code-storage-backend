@@ -35,7 +35,11 @@ router.post('/register', async (req, res) => {
 	const user = await authService.register(email, password, name)
 	if (!user) {
 		res.status(400).json({ error: '[register] User already exists' })
-	} else res.json(user)
+		return null
+	}
+	res.json(user)
 })
+
+// TODO: logout
 
 export const authController = router

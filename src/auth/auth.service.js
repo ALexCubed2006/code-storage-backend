@@ -6,7 +6,7 @@ import { JWT_SIGN, prisma } from '../../config.js'
 // with secret signature
 function generateToken(id) {
 	return jwt.sign({ id }, JWT_SIGN, {
-		expiresIn: '24h',
+		expiresIn: '1d',
 	})
 }
 

@@ -5,6 +5,8 @@ import { UploadService } from './upload.service.js'
 const router = Router()
 const uploadService = new UploadService()
 
+// ----- FILE UPLOAD -----
+
 // uploading files from frontend
 // then uploading to database
 // and uploading to public folder
@@ -64,6 +66,42 @@ router.get('/getAllFiles', async (req, res) => {
 	if (!files) {
 		return res.status(403).json('[data] No access to get all files')
 	}
+
+	res.json(files)
+})
+
+router.delete('/deleteAllFiles', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	const deletedFiles = await uploadService.deleteAllFiles(req.user.id)
+
+	if (!deletedFiles) {
+		return res.status(403).json('[data] No access to delete all files')
+	}
+
+	res.json({ success: true })
+})
+
+router.get('/getUserFileIds', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	const ids = await uploadService.getUserFilesIds(req.user.id)
+
+	res.json(ids)
+})
+
+router.get('/getUserFiles', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+	console.log(req.query)
+	const { skip = 0, amount = 10 } = req.query
+
+	const files = await uploadService.getUserFiles(req.user.id, skip, amount)
 
 	res.json(files)
 })

@@ -1,3 +1,6 @@
+# file to start the database container
+# install docker, pull postgres image
+# run: docker-compose up
 version: '3'
 
 services:
