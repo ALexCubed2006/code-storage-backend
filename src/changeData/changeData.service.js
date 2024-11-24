@@ -2,6 +2,7 @@ import { prisma } from '../../config.js'
 
 export class ChangeDataService {
 	async changeName(id, name) {
+		console.log('ChangeDataService')
 		const user = await prisma.user.update({
 			where: {
 				id,
@@ -9,14 +10,14 @@ export class ChangeDataService {
 			data: {
 				name,
 			},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                groupRole: true,
-                phoneNumber: true,
-            }
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				role: true,
+				groupRole: true,
+				phoneNumber: true,
+			},
 		})
 
 		if (!user) {
@@ -34,14 +35,14 @@ export class ChangeDataService {
 			data: {
 				phoneNumber,
 			},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                groupRole: true,
-                phoneNumber: true,
-            }
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				role: true,
+				groupRole: true,
+				phoneNumber: true,
+			},
 		})
 
 		if (!user) {
@@ -64,7 +65,7 @@ export class ChangeDataService {
 		}
 
 		if (isAdmin.role !== 'ADMIN') {
-			return {error: '[access] Not admin'}
+			return { error: '[access] Not admin' }
 		}
 
 		const user = await prisma.user.update({
@@ -74,14 +75,14 @@ export class ChangeDataService {
 			data: {
 				password,
 			},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                groupRole: true,
-                phoneNumber: true,
-            }
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				role: true,
+				groupRole: true,
+				phoneNumber: true,
+			},
 		})
 
 		if (!user) {
@@ -114,14 +115,14 @@ export class ChangeDataService {
 			data: {
 				email,
 			},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                groupRole: true,
-                phoneNumber: true,
-            }
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				role: true,
+				groupRole: true,
+				phoneNumber: true,
+			},
 		})
 
 		return user
@@ -135,7 +136,7 @@ export class ChangeDataService {
 			},
 		})
 
-		if(!isAdmin) {
+		if (!isAdmin) {
 			return null
 		}
 
@@ -150,14 +151,14 @@ export class ChangeDataService {
 			data: {
 				role,
 			},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                groupRole: true,
-                phoneNumber: true,
-            }
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				role: true,
+				groupRole: true,
+				phoneNumber: true,
+			},
 		})
 
 		return user

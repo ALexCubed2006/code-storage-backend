@@ -33,7 +33,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (user.role !== 'user') {
+		if (user.role !== 'USER') {
 			return null
 		}
 
@@ -46,7 +46,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (admin.role !== 'admin') {
+		if (admin.role !== 'ADMIN') {
 			return null
 		}
 
@@ -60,7 +60,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (owner.role !== 'owner') {
+		if (owner.role !== 'OWNER') {
 			return null
 		}
 
@@ -73,7 +73,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (member.role !== 'member') {
+		if (member.role !== 'MEMBER') {
 			return null
 		}
 
@@ -86,7 +86,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (moderator.role !== 'moderator') {
+		if (moderator.role !== 'MODERATOR') {
 			return null
 		}
 
@@ -99,7 +99,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (guest.role !== 'guest') {
+		if (guest.role !== 'GUEST') {
 			return null
 		}
 
@@ -112,10 +112,55 @@ export class AccessService {
 				id,
 			},
 		})
-		if (banned.role !== 'banned') {
+		if (banned.role !== 'BANNED') {
 			return null
 		}
 
 		return banned
+	}
+
+	// ----- Edit profile -----
+	async editProfile(id, type) {
+		const user = await prisma.user.findUnique({
+			where: {
+				id,
+			},
+		})
+		console.log(type)
+
+		if (!user) {
+			return null
+		}
+
+		if (type === 'name') {
+			return {access: true}
+		}
+
+		if (type === 'phoneNumber') {
+			return {access: true}
+		}
+
+		if (type === 'role') {
+			if (user.role !== 'ADMIN') {
+				return { error: '[access] Not admin' }
+			}
+			return {access: true}
+		}
+
+		if (type === 'email') {
+			if (user.role !== 'ADMIN') {
+				return { error: '[access] Not admin' }
+			}
+			return {access: true}
+		}
+
+		if (type === 'password') {
+			if (user.role !== 'ADMIN') {
+				return { error: '[access] Not admin' }
+			}
+			return {access: true}
+		}
+
+		return null
 	}
 }

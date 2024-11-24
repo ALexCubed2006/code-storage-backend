@@ -36,6 +36,7 @@ router.post('/file', async (req, res) => {
 // deleting files from database
 // and deleting from public folder
 router.delete('/deleteFile', async (req, res) => {
+	console.log('test')
 	if (!req.user) {
 		return res.status(401).json('[data] Unauthorized')
 	}
@@ -122,6 +123,24 @@ router.post('/getFile', async (req, res) => {
 	}
 
 	res.json(file)
+})
+
+router.get('/downloadFile', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	if (!req.query.fileName) {
+		return res.status(400).json('[data] No file name provided')
+	}
+
+	const file = await uploadService.downloadFile(req.query.fileName)
+
+	if (!file) {
+		return res.status(404).json('[data] File not found')
+	}
+
+	res.download(file)
 })
 
 export const dataController = router

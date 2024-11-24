@@ -21,6 +21,7 @@ model CodeFile {
   userId     Int
   uploadedAt DateTime @default(now())
   path       String
+  isPublic   Boolean @default(false)
 }
 
 model User {

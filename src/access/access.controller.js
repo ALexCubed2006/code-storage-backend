@@ -66,4 +66,18 @@ router.get('/isGuest', async (req, res) => {
 	res.status(200).json(guest)
 })
 
+// get access for edit profile
+router.post('/editProfile', async (req, res) => {
+	const access = await accessService.editProfile(req.user.id, req.body.type)
+
+	if (!access) {
+		return res.status(401).json({ error: '[access] Not accessed' })
+	}
+	if (access.error) {
+		return res.status(401).json({ error: access.error })
+	}
+
+	res.status(200).json(access)
+})
+
 export const accessController = router

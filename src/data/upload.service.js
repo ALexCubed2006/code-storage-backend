@@ -239,4 +239,19 @@ export class UploadService {
 			}
 		}
 	}
+
+	async downloadFile(fileName) {
+		const file = await prisma.codeFile.findFirst({
+			where: {
+				name: fileName,
+			},
+		})
+		
+		if (!file) {
+			return null
+		}
+
+		const fileContent = fs.readFileSync(__dirname__ + file.path)
+		return fileContent
+	}
 }

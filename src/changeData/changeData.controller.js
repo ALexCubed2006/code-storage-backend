@@ -5,8 +5,9 @@ const changeDataService = new ChangeDataService()
 const router = Router()
 
 // change profile data routes
-router.put('/changeName', async (req, res) => {
-	const { name } = req.body
+router.put('/change-name', async (req, res) => {
+	const name = req.body.value
+	console.log(name)
 
 	const user = await changeDataService.changeName(req.user.id, name)
 
@@ -14,11 +15,11 @@ router.put('/changeName', async (req, res) => {
 		res.status(400).json({ error: '[changeName] User not found' })
 		return null
 	}
-	res.json(user)
+	res.json({ success: true, ...user })
 })
 
-router.put('/changePhoneNumber', async (req, res) => {
-	const { phoneNumber } = req.body
+router.put('/change-phoneNumber', async (req, res) => {
+	const phoneNumber = req.body.value
 
 	const user = await changeDataService.changePhoneNumber(
 		req.user.id,
@@ -29,11 +30,11 @@ router.put('/changePhoneNumber', async (req, res) => {
 		res.status(400).json({ error: '[changePhoneNumber] User not found' })
 		return null
 	}
-	res.json(user)
+	res.json({ success: true, ...user })
 })
 
-router.put('/changeEmail', async (req, res) => {
-	const { email } = req.body
+router.put('/change-email', async (req, res) => {
+	const email = req.body.value
 
 	const user = await changeDataService.changeEmail(req.user.id, email)
 
@@ -42,15 +43,15 @@ router.put('/changeEmail', async (req, res) => {
 		return null
 	}
 
-	if(user.error) {
+	if (user.error) {
 		return res.status(400).json(user.error)
 	}
 
-	res.json(user)
+	res.json({ success: true, ...user })
 })
 
-router.put('/changePassword', async (req, res) => {
-	const { password } = req.body
+router.put('/change-password', async (req, res) => {
+	const password = req.body.value
 
 	const user = await changeDataService.changePassword(req.user.id, password)
 
@@ -59,13 +60,12 @@ router.put('/changePassword', async (req, res) => {
 		return null
 	}
 
-	if(user.error) {
+	if (user.error) {
 		return res.status(400).json(user.error)
 	}
 
-	res.json(user)
+	res.json({ success: true, ...user })
 })
-	
 
 // TODO: forgot password
 // TODO: reset password

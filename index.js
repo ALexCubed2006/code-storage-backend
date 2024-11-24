@@ -30,13 +30,24 @@ app.use((req, res, next) => {
 app.options('*', (req, res) => {
 	// ???
 	res.header('Access-Control-Allow-Origin', '*')
-	res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
+	res.header(
+		'Access-Control-Allow-Methods',
+		'GET,HEAD,OPTIONS,POST,PUT, DELETE',
+	)
 	res.header(
 		'Access-Control-Allow-Headers',
 		'Origin, X-Requested-With, Content-Type, Accept, Authorization',
 	)
 	res.status(200).send()
 })
+// app.use(
+// 	// ???
+// 	cors({
+// 		methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add DELETE to the allowed methods
+// 		allowedHeaders: ['Content-Type', 'Authorization'],
+// 		origin: '*',
+// 	}),
+// )
 
 async function main() {
 	// main routes of app
