@@ -40,14 +40,6 @@ app.options('*', (req, res) => {
 	)
 	res.status(200).send()
 })
-// app.use(
-// 	// ???
-// 	cors({
-// 		methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add DELETE to the allowed methods
-// 		allowedHeaders: ['Content-Type', 'Authorization'],
-// 		origin: '*',
-// 	}),
-// )
 
 async function main() {
 	// main routes of app
@@ -119,6 +111,11 @@ async function main() {
 
 	app.get('/getFiles', async (_, res) => {
 		const files = await prisma.codeFile.findMany({})
+		res.json(files)
+	})
+
+	app.get('/deleteAllFiles', async (_, res) => {
+		const files = await prisma.codeFile.deleteMany({})
 		res.json(files)
 	})
 

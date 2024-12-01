@@ -178,6 +178,8 @@ export class UploadService {
 				id: true,
 				name: true,
 				uploadedAt: true,
+				lastUpdated: true,
+				isPublic: true,
 			},
 		})
 
@@ -246,7 +248,7 @@ export class UploadService {
 				name: fileName,
 			},
 		})
-		
+
 		if (!file) {
 			return null
 		}

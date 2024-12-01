@@ -1,9 +1,11 @@
 import { Router } from 'express'
 import { prisma } from '../../config.js'
+import { FileUpdateService } from './fileUpdate.servise.js'
 import { UploadService } from './upload.service.js'
 
 const router = Router()
 const uploadService = new UploadService()
+const fileUpdateService = new FileUpdateService()
 
 // ----- FILE UPLOAD -----
 
@@ -36,7 +38,6 @@ router.post('/file', async (req, res) => {
 // deleting files from database
 // and deleting from public folder
 router.delete('/deleteFile', async (req, res) => {
-	console.log('test')
 	if (!req.user) {
 		return res.status(401).json('[data] Unauthorized')
 	}
@@ -71,6 +72,7 @@ router.get('/getAllFiles', async (req, res) => {
 	res.json(files)
 })
 
+// ADMIN ONLY
 router.delete('/deleteAllFiles', async (req, res) => {
 	if (!req.user) {
 		return res.status(401).json('[data] Unauthorized')
@@ -99,7 +101,6 @@ router.get('/getUserFiles', async (req, res) => {
 	if (!req.user) {
 		return res.status(401).json('[data] Unauthorized')
 	}
-	console.log(req.query)
 	const { skip = 0, amount = 10 } = req.query
 
 	const files = await uploadService.getUserFiles(req.user.id, skip, amount)
@@ -141,6 +142,67 @@ router.get('/downloadFile', async (req, res) => {
 	}
 
 	res.download(file)
+})
+
+// ----- FILE UPDATE -----
+
+router.put('/updateFileName', async (req, res) => {
+	console.log(req.body)
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	if (!req.body.fileName) {
+		return res.status(400).json('[data] No file name provided')
+	}
+
+	const updatedFile = await fileUpdateService.updateFileName(
+		req.body.fileId,
+		req.body.fileName,
+	)
+
+	if (!updatedFile) {
+		return res.status(404).json('[data] File not found')
+	}
+
+	res.json(updatedFile)
+})
+
+router.put('/updateIsPublic', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	if (req.body.isPublic === undefined) {
+		return res.status(400).json('[data] No isPublic arg provided')
+	}
+
+	const updatedFile = await fileUpdateService.updateIsPublic(
+		req.body.fileId,
+		req.body.isPublic,
+	)
+
+	if (!updatedFile) {
+		return res.status(404).json('[data] File not found')
+	}
+
+	res.json(updatedFile)
+})
+
+router.put('/updateFileRating', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	const updatedFile = await fileUpdateService.updateFileRating(
+		req.body.fileId,
+	)
+
+	if (!updatedFile) {
+		return res.status(404).json('[data] File not found')
+	}
+
+	res.json(updatedFile)
 })
 
 export const dataController = router
