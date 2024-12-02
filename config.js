@@ -2,10 +2,10 @@
  * config file
  * for all env and constant variables
  * and database client
- * 
+ *
  * to start server you need create .env file
  * with all env variables
- * and DATABASE_URL: 
+ * and DATABASE_URL:
  * 	postgresql://[username]:[your password]@localhost:[port of db]/[db name]?schema=public
  */
 
@@ -28,6 +28,41 @@ export const JWT_SIGN =
 // server url constants
 export const __dirname__ = 'C:/Users/admin/Desktop/code-storage-backend'
 export const SERVER_URL = `http://${SERVER_HOST}:${SERVER_PORT}`
+export const TOKEN_DURATION = '1d'
 
 // db client export
 export const prisma = new PrismaClient()
+
+export const USER_ROLES = {
+	user: 'USER',
+	admin: 'ADMIN',
+}
+export const GROUP_ROLES = {
+	owner: 'OWNER',
+	member: 'MEMBER',
+	moderator: 'MODERATOR',
+	guest: 'GUEST',
+	banned: 'BANNED',
+}
+
+export const acceptedCodeFiles = [
+	'js',
+	'jsx',
+	'ts',
+	'tsx',
+	'json',
+	'yaml',
+	'html',
+	'css',
+	'md',
+	'txt',
+]
+
+export const CHANGE_DATA_TYPES = {
+	name: 'name',
+	email: 'email',
+	password: 'password',
+	phoneNumber: 'phoneNumber',
+	role: 'role',
+	groupRole: 'groupRole',
+}

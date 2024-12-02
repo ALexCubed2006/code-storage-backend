@@ -15,28 +15,38 @@ model Group {
 }
 
 model CodeFile {
-  id          Int      @id @default(autoincrement())
-  name        String   @default("unnamed")
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
-  uploadedAt  DateTime @default(now())
-  lastUpdated DateTime @default(now())
-  path        String
-  isPublic    Boolean  @default(false)
-  rating      Int      @default(0)
+  id                Int                @id @default(autoincrement())
+  name              String             @default("unnamed")
+  user              User               @relation(fields: [userId], references: [id])
+  userId            Int
+  uploadedAt        DateTime           @default(now())
+  lastUpdated       DateTime           @default(now())
+  path              String
+  isPublic          Boolean            @default(false)
+  rating            Int                @default(0)
+  favoriteCodeFiles FavoriteCodeFile[]
+}
+
+model FavoriteCodeFile {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  codeFile   CodeFile @relation(fields: [codeFileId], references: [id])
+  codeFileId Int
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  email       String     @unique
-  password    String
-  name        String?
-  phoneNumber String?
-  role        Role       @default(USER)
-  group       Group?     @relation(fields: [groupId], references: [id])
-  groupId     Int?
-  groupRole   GroupRole? @default(MEMBER)
-  codeFile    CodeFile[]
+  id                Int                @id @default(autoincrement())
+  email             String             @unique
+  password          String
+  name              String?
+  phoneNumber       String?
+  role              Role               @default(USER)
+  group             Group?             @relation(fields: [groupId], references: [id])
+  groupId           Int?
+  groupRole         GroupRole?         @default(MEMBER)
+  codeFile          CodeFile[]
+  favoriteCodeFiles FavoriteCodeFile[]
 }
 
 enum Role {

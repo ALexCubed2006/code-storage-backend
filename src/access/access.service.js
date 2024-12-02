@@ -1,4 +1,9 @@
-import { prisma } from '../../config.js'
+import {
+	CHANGE_DATA_TYPES,
+	GROUP_ROLES,
+	prisma,
+	USER_ROLES,
+} from '../../config.js'
 
 // class for check
 // if the user have role (access)
@@ -33,7 +38,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (user.role !== 'USER') {
+		if (user.role !== USER_ROLES.user) {
 			return null
 		}
 
@@ -46,7 +51,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (admin.role !== 'ADMIN') {
+		if (admin.role !== USER_ROLES.admin) {
 			return null
 		}
 
@@ -60,10 +65,9 @@ export class AccessService {
 				id,
 			},
 		})
-		if (owner.role !== 'OWNER') {
+		if (owner.role !== GROUP_ROLES.owner) {
 			return null
 		}
-
 		return owner
 	}
 
@@ -73,7 +77,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (member.role !== 'MEMBER') {
+		if (member.role !== GROUP_ROLES.member) {
 			return null
 		}
 
@@ -86,7 +90,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (moderator.role !== 'MODERATOR') {
+		if (moderator.role !== GROUP_ROLES.moderator) {
 			return null
 		}
 
@@ -99,7 +103,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (guest.role !== 'GUEST') {
+		if (guest.role !== GROUP_ROLES.guest) {
 			return null
 		}
 
@@ -112,7 +116,7 @@ export class AccessService {
 				id,
 			},
 		})
-		if (banned.role !== 'BANNED') {
+		if (banned.role !== GROUP_ROLES.banned) {
 			return null
 		}
 
@@ -132,33 +136,33 @@ export class AccessService {
 			return null
 		}
 
-		if (type === 'name') {
-			return {access: true}
+		if (type === CHANGE_DATA_TYPES.name) {
+			return { access: true }
 		}
 
-		if (type === 'phoneNumber') {
-			return {access: true}
+		if (type === CHANGE_DATA_TYPES.phoneNumber) {
+			return { access: true }
 		}
 
-		if (type === 'role') {
-			if (user.role !== 'ADMIN') {
+		if (type === CHANGE_DATA_TYPES.role) {
+			if (user.role !== USER_ROLES.admin) {
 				return { error: '[access] Not admin' }
 			}
-			return {access: true}
+			return { access: true }
 		}
 
-		if (type === 'email') {
-			if (user.role !== 'ADMIN') {
+		if (type === CHANGE_DATA_TYPES.email) {
+			if (user.role !== USER_ROLES.admin) {
 				return { error: '[access] Not admin' }
 			}
-			return {access: true}
+			return { access: true }
 		}
 
-		if (type === 'password') {
-			if (user.role !== 'ADMIN') {
+		if (type === CHANGE_DATA_TYPES.password) {
+			if (user.role !== USER_ROLES.admin) {
 				return { error: '[access] Not admin' }
 			}
-			return {access: true}
+			return { access: true }
 		}
 
 		return null

@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken'
-import { JWT_SIGN, prisma } from '../../config.js'
+import { JWT_SIGN, prisma, TOKEN_DURATION } from '../../config.js'
 
 // generate jwt token
 // encode user id
 // with secret signature
 function generateToken(id) {
 	return jwt.sign({ id }, JWT_SIGN, {
-		expiresIn: '1d',
+		expiresIn: TOKEN_DURATION,
 	})
 }
 

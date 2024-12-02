@@ -1,8 +1,7 @@
-import { prisma } from '../../config.js'
+import { prisma, USER_ROLES } from '../../config.js'
 
 export class ChangeDataService {
 	async changeName(id, name) {
-		console.log('ChangeDataService')
 		const user = await prisma.user.update({
 			where: {
 				id,
@@ -64,7 +63,7 @@ export class ChangeDataService {
 			return null
 		}
 
-		if (isAdmin.role !== 'ADMIN') {
+		if (isAdmin.role !== USER_ROLES.admin) {
 			return { error: '[access] Not admin' }
 		}
 
@@ -104,7 +103,7 @@ export class ChangeDataService {
 			return null
 		}
 
-		if (isAdmin.role !== 'ADMIN') {
+		if (isAdmin.role !== USER_ROLES.admin) {
 			return { error: '[access] Not admin' }
 		}
 
@@ -140,7 +139,7 @@ export class ChangeDataService {
 			return null
 		}
 
-		if (isAdmin.role !== 'ADMIN') {
+		if (isAdmin.role !== USER_ROLES.admin) {
 			return { error: '[access] Not admin' }
 		}
 

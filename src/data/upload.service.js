@@ -1,5 +1,10 @@
 import fs from 'fs'
-import { __dirname__, prisma } from '../../config.js'
+import {
+	__dirname__,
+	acceptedCodeFiles,
+	prisma,
+	USER_ROLES,
+} from '../../config.js'
 
 export class UploadService {
 	// upload file to database
@@ -59,6 +64,11 @@ export class UploadService {
 					id: file.id,
 				},
 			})
+			await prisma.favoriteCodeFile.deleteMany({
+				where: {
+					codeFileId: file.id,
+				},
+			})
 
 			// delete file from public folder
 			fs.unlinkSync(filePath)
@@ -69,14 +79,14 @@ export class UploadService {
 		}
 	}
 
-	// ADMIN ONLY
+	// ----- FOR ADMIN ONLY -----
 	// !!! DELETING ALL FILES !!!
 	// !!! USE WITH CAUTION !!!
 	async deleteAllFiles(userId) {
 		const user = await prisma.user.findUnique({
 			where: {
 				id: userId,
-				userRole: 'ADMIN',
+				userRole: USER_ROLES.admin,
 			},
 		})
 
@@ -95,6 +105,11 @@ export class UploadService {
 						id: file.id,
 					},
 				})
+				await prisma.favoriteCodeFile.deleteMany({
+					where: {
+						codeFileId: file.id,
+					},
+				})
 			}
 		} catch (err) {
 			console.log('[error] File not found - ', err)
@@ -108,7 +123,7 @@ export class UploadService {
 		const user = await prisma.user.findUnique({
 			where: {
 				id: userId,
-				userRole: 'ADMIN',
+				userRole: USER_ROLES.admin,
 			},
 		})
 
@@ -195,22 +210,92 @@ export class UploadService {
 		})
 	}
 
+	async getRandomPublicFiles(amount) {
+		const files = await prisma.codeFile.findMany({
+			where: {
+				isPublic: true,
+			},
+			select: {
+				id: true,
+				name: true,
+			},
+			take: +amount,
+		})
+
+		if (!files) {
+			return null
+		}
+		// TODO: add random selection
+		return files
+	}
+
+	async getFavoriteFiles(userId, skip, amount) {
+		const user = await prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+		})
+
+		if (!user) {
+			return null
+		}
+
+		const files = await prisma.favoriteCodeFile.findMany({
+			where: {
+				userId: user.id,
+			},
+			select: {
+				codeFileId: true,
+			},
+			skip: +skip,
+			take: +amount,
+		})
+
+		if (!files) {
+			return null
+		}
+
+		const fileIds = files.map((file) => {
+			return file.codeFileId
+		})
+
+		const filesInfo = await prisma.codeFile.findMany({
+			where: {
+				id: {
+					in: fileIds,
+				},
+			},
+			select: {
+				id: true,
+				name: true,
+				uploadedAt: true,
+				lastUpdated: true,
+				isPublic: true,
+			},
+		})
+
+		if (!filesInfo) {
+			return null
+		}
+
+		return filesInfo.map((file) => {
+			// converting file info for client
+			const fileInfo = file.name.split('-').splice(0, 3).join('-') // email-id-time
+			const name = file.name.split('-').slice(3).join('-') // file name
+			return {
+				...file,
+				fileInfo,
+				name,
+			}
+		})
+	}
+
+	
+
 	// get file from database
 	// by file id and file name
 	async getFile(fileName, id) {
 		const fileExtension = fileName.split('.').slice(-1)[0]
-		const acceptedCodeFiles = [
-			'js',
-			'jsx',
-			'ts',
-			'tsx',
-			'json',
-			'yaml',
-			'html',
-			'css',
-			'md',
-			'txt',
-		]
 		const dbFile = await prisma.codeFile.findFirst({
 			where: {
 				name: fileName,

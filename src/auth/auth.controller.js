@@ -40,6 +40,6 @@ router.post('/register', async (req, res) => {
 	res.json(user)
 })
 
-// TODO: logout
+// TODO: delete account
 
 export const authController = router

@@ -114,6 +114,11 @@ async function main() {
 		res.json(files)
 	})
 
+	app.get('/getFavorites', async (_, res) => {
+		const files = await prisma.favoriteCodeFile.findMany({})
+		res.json(files)
+	})
+
 	app.get('/deleteAllFiles', async (_, res) => {
 		const files = await prisma.codeFile.deleteMany({})
 		res.json(files)

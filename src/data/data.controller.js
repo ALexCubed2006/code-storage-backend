@@ -108,6 +108,33 @@ router.get('/getUserFiles', async (req, res) => {
 	res.json(files)
 })
 
+router.get('/getRandomPublicFiles', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+	const { amount = 10 } = req.query
+
+	const files = await uploadService.getRandomPublicFiles(amount)
+
+	res.json(files)
+})
+
+router.get('/getFavoriteFiles', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	const { skip = 0, amount = 10 } = req.query
+
+	const files = await uploadService.getFavoriteFiles(
+		req.user.id,
+		skip,
+		amount,
+	)
+
+	res.json(files)
+})
+
 router.post('/getFile', async (req, res) => {
 	if (!req.user) {
 		return res.status(401).json('[data] Unauthorized')
@@ -196,6 +223,40 @@ router.put('/updateFileRating', async (req, res) => {
 
 	const updatedFile = await fileUpdateService.updateFileRating(
 		req.body.fileId,
+	)
+
+	if (!updatedFile) {
+		return res.status(404).json('[data] File not found')
+	}
+
+	res.json(updatedFile)
+})
+
+router.put('/addToFavorites', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	const updatedFile = await fileUpdateService.addToFavorites(
+		req.body.fileId,
+		req.user.id,
+	)
+
+	if (!updatedFile) {
+		return res.status(404).json('[data] File not found')
+	}
+
+	res.json(updatedFile)
+})
+
+router.put('/removeFromFavorites', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json('[data] Unauthorized')
+	}
+
+	const updatedFile = await fileUpdateService.removeFromFavorites(
+		req.body.fileId,
+		req.user.id,
 	)
 
 	if (!updatedFile) {
