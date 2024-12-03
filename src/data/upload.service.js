@@ -48,6 +48,7 @@ export class UploadService {
 		const filePath = __dirname__ + '/public/uploads/' + fileName
 
 		try {
+			// FIXME:
 			// finding file in database
 			const file = await prisma.codeFile.findFirst({
 				where: {
@@ -55,20 +56,31 @@ export class UploadService {
 					name: fileName,
 				},
 			})
+
+			//console.log(file)
 			if (!file) return null
 
-			// delete file from database
-			const deletedFile = await prisma.codeFile.delete({
-				where: {
-					name: fileName,
-					id: file.id,
-				},
-			})
-			await prisma.favoriteCodeFile.deleteMany({
+			const favorites = await prisma.favoriteCodeFile.findMany({
 				where: {
 					codeFileId: file.id,
 				},
 			})
+
+			for (const favorite of favorites) {
+				await prisma.favoriteCodeFile.delete({
+					where: {
+						id: favorite.id,
+					},
+				})
+			}
+
+			// delete file from database
+			const deletedFile = await prisma.codeFile.delete({
+				where: {
+					id: file.id,
+				},
+			})
+			console.log(deletedFile)
 
 			// delete file from public folder
 			fs.unlinkSync(filePath)
@@ -156,6 +168,8 @@ export class UploadService {
 				name: true,
 			},
 		})
+
+		console.log(fileIds)
 
 		return fileIds.map((file) => {
 			return {
@@ -289,8 +303,6 @@ export class UploadService {
 			}
 		})
 	}
-
-	
 
 	// get file from database
 	// by file id and file name
