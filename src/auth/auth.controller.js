@@ -40,6 +40,22 @@ router.post('/register', async (req, res) => {
 	res.json(user)
 })
 
-// TODO: delete account
+router.delete('/deleteUser', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json({ error: '[auth] Unauthorized' })
+	}
+
+	const deleted = await authService.deleteUser(
+		req.user.id,
+		req.body.email,
+		req.body.password,
+	)
+
+	if (!deleted) {
+		return res.status(404).json({ error: '[auth] User not found' })
+	}
+
+	res.json(deleted)
+})
 
 export const authController = router

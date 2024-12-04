@@ -1,5 +1,6 @@
+import fs from 'fs'
 import jwt from 'jsonwebtoken'
-import { JWT_SIGN, prisma, TOKEN_DURATION } from '../../config.js'
+import { __dirname__, JWT_SIGN, prisma, TOKEN_DURATION } from '../../config.js'
 
 // generate jwt token
 // encode user id
@@ -55,6 +56,47 @@ export class AuthService {
 		return {
 			token,
 			user,
+		}
+	}
+
+	async deleteUser(id, email, password) {
+		const user = await prisma.user.findUnique({
+			where: {
+				email,
+				password,
+				id,
+			},
+		})
+
+		if (!user) {
+			return null
+		}
+
+		await prisma.favoriteCodeFile.deleteMany({
+			where: {
+				userId: id,
+			},
+		})
+
+		const files = await prisma.codeFile.deleteMany({
+			where: {
+				userId: id,
+			},
+		})
+
+		for (const file of files) {
+			const filePath = __dirname__ + '/public/uploads/' + file.name
+			fs.unlinkSync(filePath)
+		}
+
+		await prisma.user.delete({
+			where: {
+				id,
+			},
+		})
+
+		return {
+			message: 'User deleted successfully',
 		}
 	}
 }

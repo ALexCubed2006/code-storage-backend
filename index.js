@@ -8,6 +8,7 @@ import { dataController } from './src/data/data.controller.js'
 import { authMiddleware } from './src/middleware/auth.middleware.js'
 import { isLoggedMiddleware } from './src/middleware/isLogged.middleware.js'
 import { validateMiddleware } from './src/middleware/validate.middleware.js'
+import { searchController } from './src/search/search.controller.js'
 
 const app = express()
 
@@ -48,6 +49,7 @@ async function main() {
 	app.use('/api/redirect', isLoggedMiddleware, authController)
 	app.use('/api/access', authMiddleware, accessController)
 	app.use('/api/upload', authMiddleware, dataController)
+	app.use('/api/search', authMiddleware, searchController)
 
 	// routes for test and debug
 	app.get('/getUsers', async (_, res) => {

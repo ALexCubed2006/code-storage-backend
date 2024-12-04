@@ -6,6 +6,9 @@ const router = Router()
 
 // change profile data routes
 router.put('/change-name', async (req, res) => {
+	if(!req.user) {
+		return res.status(401).json({ error: '[changeData] Unauthorized' })
+	}
 	const name = req.body.value
 	console.log(name)
 
@@ -19,6 +22,9 @@ router.put('/change-name', async (req, res) => {
 })
 
 router.put('/change-phoneNumber', async (req, res) => {
+	if(!req.user) {
+		return res.status(401).json({ error: '[changeData] Unauthorized' })
+	}
 	const phoneNumber = req.body.value
 
 	const user = await changeDataService.changePhoneNumber(
@@ -34,6 +40,9 @@ router.put('/change-phoneNumber', async (req, res) => {
 })
 
 router.put('/change-email', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json({ error: '[changeData] Unauthorized' })
+	}
 	const email = req.body.value
 
 	const user = await changeDataService.changeEmail(req.user.id, email)
@@ -51,6 +60,9 @@ router.put('/change-email', async (req, res) => {
 })
 
 router.put('/change-password', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json({ error: '[changeData] Unauthorized' })
+	}
 	const password = req.body.value
 
 	const user = await changeDataService.changePassword(req.user.id, password)
@@ -66,8 +78,5 @@ router.put('/change-password', async (req, res) => {
 
 	res.json({ success: true, ...user })
 })
-
-// TODO: forgot password
-// TODO: reset password
 
 export const changeDataController = router

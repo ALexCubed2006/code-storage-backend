@@ -14,10 +14,10 @@ const fileUpdateService = new FileUpdateService()
 // and uploading to public folder
 router.post('/file', async (req, res) => {
 	if (!req.files) {
-		return res.status(400).json('[data] No file uploaded')
+		return res.json({ error: '[data] No file uploaded' })
 	}
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const file = req.files.file
@@ -39,11 +39,11 @@ router.post('/file', async (req, res) => {
 // and deleting from public folder
 router.delete('/deleteFile', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	if (!req.body.fileName) {
-		return res.status(400).json('[data] No file name provided')
+		return res.status(400).json({ error: '[data] No file name provided' })
 	}
 
 	const deletedFile = await uploadService.deleteFile(
@@ -52,7 +52,7 @@ router.delete('/deleteFile', async (req, res) => {
 	)
 
 	if (!deletedFile) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(deletedFile)
@@ -60,13 +60,15 @@ router.delete('/deleteFile', async (req, res) => {
 
 router.get('/getAllFiles', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const files = await uploadService.getAllFiles(req.user.id)
 
 	if (!files) {
-		return res.status(403).json('[data] No access to get all files')
+		return res
+			.status(403)
+			.json({ error: '[data] No access to get all files' })
 	}
 
 	res.json(files)
@@ -75,13 +77,15 @@ router.get('/getAllFiles', async (req, res) => {
 // ADMIN ONLY
 router.delete('/deleteAllFiles', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const deletedFiles = await uploadService.deleteAllFiles(req.user.id)
 
 	if (!deletedFiles) {
-		return res.status(403).json('[data] No access to delete all files')
+		return res.status(403).json({
+			error: '[data] No access to delete all files',
+		})
 	}
 
 	res.json({ success: true })
@@ -89,7 +93,7 @@ router.delete('/deleteAllFiles', async (req, res) => {
 
 router.get('/getUserFileIds', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const ids = await uploadService.getUserFilesIds(req.user.id)
@@ -99,7 +103,7 @@ router.get('/getUserFileIds', async (req, res) => {
 
 router.get('/getUserFiles', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 	const { skip = 0, amount = 10 } = req.query
 
@@ -110,7 +114,7 @@ router.get('/getUserFiles', async (req, res) => {
 
 router.get('/getRandomPublicFiles', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 	const { amount = 10 } = req.query
 
@@ -121,7 +125,7 @@ router.get('/getRandomPublicFiles', async (req, res) => {
 
 router.get('/getFavoriteFiles', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const { skip = 0, amount = 10 } = req.query
@@ -137,17 +141,17 @@ router.get('/getFavoriteFiles', async (req, res) => {
 
 router.post('/getFile', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	if (!req.body.fileName) {
-		return res.status(400).json('[data] No file name provided')
+		return res.status(400).json({ error: '[data] No file name provided' })
 	}
 
 	const file = await uploadService.getFile(req.body.fileName, req.body.id)
 
 	if (!file) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(file)
@@ -155,17 +159,17 @@ router.post('/getFile', async (req, res) => {
 
 router.get('/downloadFile', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	if (!req.query.fileName) {
-		return res.status(400).json('[data] No file name provided')
+		return res.status(400).json({ error: '[data] No file name provided' })
 	}
 
 	const file = await uploadService.downloadFile(req.query.fileName)
 
 	if (!file) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({})
 	}
 
 	res.download(file)
@@ -176,11 +180,11 @@ router.get('/downloadFile', async (req, res) => {
 router.put('/updateFileName', async (req, res) => {
 	console.log(req.body)
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	if (!req.body.fileName) {
-		return res.status(400).json('[data] No file name provided')
+		return res.status(400).json({})
 	}
 
 	const updatedFile = await fileUpdateService.updateFileName(
@@ -189,7 +193,7 @@ router.put('/updateFileName', async (req, res) => {
 	)
 
 	if (!updatedFile) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(updatedFile)
@@ -197,11 +201,11 @@ router.put('/updateFileName', async (req, res) => {
 
 router.put('/updateIsPublic', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	if (req.body.isPublic === undefined) {
-		return res.status(400).json('[data] No isPublic arg provided')
+		return res.status(400).json({ error: '[data] No isPublic provided' })
 	}
 
 	const updatedFile = await fileUpdateService.updateIsPublic(
@@ -210,7 +214,7 @@ router.put('/updateIsPublic', async (req, res) => {
 	)
 
 	if (!updatedFile) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(updatedFile)
@@ -218,7 +222,7 @@ router.put('/updateIsPublic', async (req, res) => {
 
 router.put('/updateFileRating', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const updatedFile = await fileUpdateService.updateFileRating(
@@ -226,7 +230,7 @@ router.put('/updateFileRating', async (req, res) => {
 	)
 
 	if (!updatedFile) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(updatedFile)
@@ -234,7 +238,7 @@ router.put('/updateFileRating', async (req, res) => {
 
 router.put('/addToFavorites', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const updatedFile = await fileUpdateService.addToFavorites(
@@ -243,7 +247,7 @@ router.put('/addToFavorites', async (req, res) => {
 	)
 
 	if (!updatedFile) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(updatedFile)
@@ -251,7 +255,7 @@ router.put('/addToFavorites', async (req, res) => {
 
 router.put('/removeFromFavorites', async (req, res) => {
 	if (!req.user) {
-		return res.status(401).json('[data] Unauthorized')
+		return res.status(401).json({ error: '[data] Unauthorized' })
 	}
 
 	const updatedFile = await fileUpdateService.removeFromFavorites(
@@ -260,7 +264,7 @@ router.put('/removeFromFavorites', async (req, res) => {
 	)
 
 	if (!updatedFile) {
-		return res.status(404).json('[data] File not found')
+		return res.status(404).json({ error: '[data] File not found' })
 	}
 
 	res.json(updatedFile)

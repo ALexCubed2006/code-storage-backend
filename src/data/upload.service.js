@@ -48,8 +48,6 @@ export class UploadService {
 		const filePath = __dirname__ + '/public/uploads/' + fileName
 
 		try {
-			// FIXME:
-			// finding file in database
 			const file = await prisma.codeFile.findFirst({
 				where: {
 					userId,
@@ -57,7 +55,6 @@ export class UploadService {
 				},
 			})
 
-			//console.log(file)
 			if (!file) return null
 
 			const favorites = await prisma.favoriteCodeFile.findMany({
@@ -80,7 +77,6 @@ export class UploadService {
 					id: file.id,
 				},
 			})
-			console.log(deletedFile)
 
 			// delete file from public folder
 			fs.unlinkSync(filePath)
@@ -169,7 +165,6 @@ export class UploadService {
 			},
 		})
 
-		console.log(fileIds)
 
 		return fileIds.map((file) => {
 			return {
@@ -239,7 +234,6 @@ export class UploadService {
 		if (!files) {
 			return null
 		}
-		// TODO: add random selection
 		return files
 	}
 
